@@ -9,14 +9,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDSubsystem extends SubsystemBase {
       private final AddressableLED m_led = new AddressableLED(9);
     private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(210);
-    private final LEDPattern m_rainBow = LEDPattern.rainbow(255, 120);
+    private LEDPattern pattern;
    public LEDSubsystem(){
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
 
     m_led.start();
-
-    setDefaultCommand(runPattern(m_rainBow));
+    pattern = LEDPattern.rainbow(255, 120);
+    setDefaultCommand(runPattern(pattern));
    }
    @Override 
    public void periodic(){
