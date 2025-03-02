@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
@@ -96,7 +97,15 @@ public class SwerveSubsystem extends SubsystemBase{
             throw new RuntimeException(e);
             }  
             setupPathPlanner();
+            RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::resetHeading));
     }
+
+    // public void zeroGyroWithAlliance(){
+    //     if(isRedAlliance()){
+    //         resetHeading();
+    //         resetOdemetry(new Pose2D(getPose().getTranslation(), Rotation2d.));
+    //     }
+    // }
 
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
@@ -184,6 +193,8 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public void resetHeading(){
+        swerveDrive.zeroGyro();
+        
     }
 
     @Override

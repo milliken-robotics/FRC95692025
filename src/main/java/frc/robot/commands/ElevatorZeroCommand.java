@@ -19,7 +19,7 @@ public class ElevatorZeroCommand extends Command{
 
     @Override
     public void execute(){
-        elevatorSubsystem.setPoint(20);
+        elevatorSubsystem.setPoint(60);
        
     }
     @Override

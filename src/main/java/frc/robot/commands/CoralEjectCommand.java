@@ -20,7 +20,7 @@ public class CoralEjectCommand extends Command{
 
     @Override
     public void execute(){
-        coralEndeffactorSubsystem.setVolt(6);
+        coralEndeffactorSubsystem.setVolt(4);
        
     }
     @Override

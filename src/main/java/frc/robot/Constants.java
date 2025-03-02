@@ -27,7 +27,7 @@ public final class Constants {
   public static class HardwareMap {
     public static final int IT_ELEVATOR_L = 40;
     public static final int IT_ELEVATOR_R = 41;
-    public static final int IT_CORAL_L = 19;
+    public static final int IT_CORAL_L = 53;
     public static final int IT_CORAL_R = 2;
     public static final int IT_BEAMBREAK = 9;
     public static final int IT_ALGAE = 38;
@@ -38,9 +38,9 @@ public final class Constants {
   }
 
   public static class ElevatorConstnats {
-    public static final double L3 = 800; 
-    public static final double L2 = 200; 
-    public static final double L1 = 0; 
+    public static final double L3 = 900; 
+    public static final double L2 = 250; 
+    public static final double L1 = 30; 
     public static final double zerod = 25; 
 
   }

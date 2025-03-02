@@ -8,6 +8,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.reduxrobotics.canand.CanandEventLoop;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlgaeEject;
+import frc.robot.commands.AlgaeIntake;
+import frc.robot.commands.AlgaePivotDown;
+import frc.robot.commands.AlgaePivotMiddle;
+import frc.robot.commands.AlgaePivotUp;
+import frc.robot.commands.AlgaePivotUpper;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorL1Command;
@@ -17,10 +23,15 @@ import frc.robot.commands.ElevatorZeroCommand;
 import frc.robot.subsystems.AlgaeEndeffactorSubsystem;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -40,27 +51,36 @@ public class RobotContainer {
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(); 
   private final CoralEndeffactorSubsystem coralEndeffactorSubsystem = new CoralEndeffactorSubsystem(); 
   private final AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem = new AlgaeEndeffactorSubsystem(); 
+  private final LEDSubsystem ledSubsystem = new LEDSubsystem(); 
 
-  private final CommandPS4Controller controller = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
+  private final CommandPS4Controller controllerP = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
+  
+  private final CommandXboxController controllerX = new CommandXboxController(1);
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+
+
+
     configureBindings();
     driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    NamedCommands.registerCommand("test", Commands.print("hellow"));
+    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem));
+    NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem));
 
   }
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(driveBase.getSwerveDrive(),
-                                                                ()-> controller.getLeftY()*-1,
-                                                                ()-> controller.getLeftX()*-1)
-                                                                .withControllerRotationAxis(controller::getRightX)
+                                                                ()-> controllerP.getLeftY()*-1,
+                                                                ()-> controllerP.getLeftX()*-1)
+                                                                .withControllerRotationAxis(controllerP::getRightX)
                                                                 .deadband(OperatorConstants.DEADBAND)
                                                                 .scaleTranslation(1)
                                                                 .allianceRelativeControl(true);
 
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(controller::getRightX, 
-                                                                                            controller::getRightY)
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(controllerP::getRightX, 
+                                                                                            controllerP::getRightY)
                                                                                             .headingWhile(true);
 
   Command driveFieldOritentedDirectAngle = driveBase.driveFieldOriented(driveDirectAngle);   
@@ -75,15 +95,30 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.L1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
-    controller.R1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
-    controller.circle().onTrue(new ElevatorZeroCommand(elevatorSubsystem));
-    controller.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
-    controller.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
-    controller.povDown().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
-    controller.povUp().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem));
-  }
+    
+    // controller.L1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
+    // controller.R1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
 
+    // controllerX.L1().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
+    // controllerX.R1().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
+
+    controllerP.circle().onTrue(new ElevatorZeroCommand(elevatorSubsystem));
+    controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
+    controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
+    controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
+    controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem));
+
+    controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.resetHeading()));
+
+
+    controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));
+    controllerX.x().onTrue(new AlgaePivotMiddle(algaeEndeffactorSubsystem));
+    controllerX.a().onTrue(new AlgaePivotDown(algaeEndeffactorSubsystem));
+    controllerX.b().onTrue(new AlgaePivotUpper(algaeEndeffactorSubsystem));
+
+    controllerX.rightTrigger().onTrue(new AlgaeIntake(algaeEndeffactorSubsystem));
+    controllerX.leftTrigger().whileTrue(new AlgaeEject(algaeEndeffactorSubsystem));
+  }
 
 
   /**
@@ -93,6 +128,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return driveBase.getAutonomousCommand("New Auto");
+    return driveBase.getAutonomousCommand("Blue Auto");
   }
 }
