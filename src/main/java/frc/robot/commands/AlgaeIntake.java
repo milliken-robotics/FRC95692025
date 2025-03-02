@@ -19,25 +19,27 @@ public class AlgaeIntake extends Command {
 
     @Override
     public void initialize() {
-        timer.reset();
-        timer.start();
+
+        algaeSubsystem.setSpeed(-12);
+        // timer.reset();
+        // timer.start();
     }
 
     @Override
     public void execute() {
-        double currentTime = timer.get();
-        double cycleTime = currentTime % pulsePeriod;
-        // For most of the cycle, run at -12 volts.
-        if (cycleTime < (pulsePeriod - offDuration)) {
-        } else {
-            algaeSubsystem.setSpeed(0);
-        }
+        // double currentTime = timer.get();
+        // double cycleTime = currentTime % pulsePeriod;
+        // // For most of the cycle, run at -12 volts.
+        // if (cycleTime < (pulsePeriod - offDuration)) {
+        // } else {
+        //     algaeSubsystem.setSpeed(0);
+        // }
     }
 
     @Override
     public void end(boolean interrupted) {
         algaeSubsystem.setSpeed(0);
-        timer.stop();
+        // timer.stop();
     }
 
     @Override
