@@ -69,6 +69,10 @@ public class RobotContainer {
     driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem));
     NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem));
+    NamedCommands.registerCommand("L0", new ElevatorZeroCommand(elevatorSubsystem));
+    NamedCommands.registerCommand("L1", new ElevatorL1Command(elevatorSubsystem));
+    NamedCommands.registerCommand("L2", new ElevatorL2Command(elevatorSubsystem));
+    NamedCommands.registerCommand("L3", new ElevatorL3Command(elevatorSubsystem));
 
   }
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(driveBase.getSwerveDrive(),
@@ -116,7 +120,7 @@ public class RobotContainer {
     controllerX.a().onTrue(new AlgaePivotDown(algaeEndeffactorSubsystem));
     controllerX.b().onTrue(new AlgaePivotUpper(algaeEndeffactorSubsystem));
 
-    controllerX.rightTrigger().onTrue(new AlgaeIntake(algaeEndeffactorSubsystem));
+    controllerX.rightTrigger().whileTrue(new AlgaeIntake(algaeEndeffactorSubsystem));
     controllerX.leftTrigger().whileTrue(new AlgaeEject(algaeEndeffactorSubsystem));
   }
 
