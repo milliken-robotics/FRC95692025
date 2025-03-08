@@ -15,11 +15,12 @@ public class ElevatorZeroCommand extends Command{
     
       @Override
     public void initialize(){
+        elevatorSubsystem.setLevel(0);
     }
 
     @Override
     public void execute(){
-        elevatorSubsystem.setPoint(60);
+        elevatorSubsystem.setPoint(30);
        
     }
     @Override

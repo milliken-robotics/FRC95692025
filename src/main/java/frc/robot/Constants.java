@@ -38,7 +38,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstnats {
-    public static final double L3 = 900; 
+    public static final double L3 = 880; 
     public static final double L2 = 250; 
     public static final double L1 = 30; 
     public static final double zerod = 25; 

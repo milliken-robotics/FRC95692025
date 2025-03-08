@@ -10,6 +10,8 @@ public class CoralIntakeCommand extends Command{
       private final CoralEndeffactorSubsystem coralEndeffactorSubsystem; 
       private final Timer time = new Timer();
 
+
+
     public CoralIntakeCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem){
         this.coralEndeffactorSubsystem = coralEndeffactorSubsystem;
         addRequirements(coralEndeffactorSubsystem);
@@ -27,7 +29,7 @@ public class CoralIntakeCommand extends Command{
     }
     @Override
     public void end(boolean interrupted){
-        new WaitCommand(0.03);
+        new WaitCommand(0.045);
         coralEndeffactorSubsystem.stop();
     }
     @Override

@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -53,7 +54,7 @@ public class RobotContainer {
   private final AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem = new AlgaeEndeffactorSubsystem(); 
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(); 
 
-  private final CommandPS4Controller controllerP = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
+  private final CommandPS5Controller controllerP = new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
   
   private final CommandXboxController controllerX = new CommandXboxController(1);
 
@@ -67,8 +68,9 @@ public class RobotContainer {
 
     configureBindings();
     driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem));
+    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
     NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem));
+    new ElevatorZeroCommand(elevatorSubsystem);
 
   }
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(driveBase.getSwerveDrive(),
@@ -106,9 +108,9 @@ public class RobotContainer {
     controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
     controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
     controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
-    controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem));
+    controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
 
-    controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.resetHeading()));
+    controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
 
 
     controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));
@@ -118,6 +120,9 @@ public class RobotContainer {
 
     controllerX.rightTrigger().onTrue(new AlgaeIntake(algaeEndeffactorSubsystem));
     controllerX.leftTrigger().whileTrue(new AlgaeEject(algaeEndeffactorSubsystem));
+
+    controllerX.povLeft().onTrue(Commands.runOnce(()-> coralEndeffactorSubsystem.diffRight()));
+    controllerX.povRight().onTrue(Commands.runOnce(()-> coralEndeffactorSubsystem.diffLeft()));
   }
 
 
@@ -128,6 +133,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return driveBase.getAutonomousCommand("Blue Auto");
+    return driveBase.getAutonomousCommand("New Auto");
   }
 }

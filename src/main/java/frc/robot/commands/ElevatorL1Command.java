@@ -5,7 +5,7 @@ import frc.robot.Constants.ElevatorConstnats;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorL1Command extends Command{
-      private final ElevatorSubsystem elevatorSubsystem; 
+    private final ElevatorSubsystem elevatorSubsystem; 
 
     public ElevatorL1Command(ElevatorSubsystem elevatorSubsystem){
         this.elevatorSubsystem = elevatorSubsystem;
@@ -15,6 +15,7 @@ public class ElevatorL1Command extends Command{
     
       @Override
     public void initialize(){
+        elevatorSubsystem.setLevel(1);
     }
 
     @Override
