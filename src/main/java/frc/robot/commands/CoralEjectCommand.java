@@ -41,6 +41,6 @@ public class CoralEjectCommand extends Command{
     }
     @Override
     public boolean isFinished(){
-        return coralEndeffactorSubsystem.beamBroken();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
+        return coralEndeffactorSubsystem.beamBroken2();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
     }
 }

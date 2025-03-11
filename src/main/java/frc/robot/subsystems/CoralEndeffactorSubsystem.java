@@ -19,8 +19,9 @@ public class CoralEndeffactorSubsystem extends SubsystemBase{
      private double leftDiffRatio = 1; 
      private double rightDiffRatio = 0.4;
 
-    private final DigitalInput beamBreak = new DigitalInput(HardwareMap.IT_BEAMBREAK); 
-    
+     private final DigitalInput beamBreak1 = new DigitalInput(HardwareMap.IT_BEAMBREAK1);
+     private final DigitalInput beamBreak2 = new DigitalInput(HardwareMap.IT_BEAMBREAK2);
+
     public CoralEndeffactorSubsystem (){
         leftCoralMotor.setInverted(false);
         rightCoralMotor.setInverted(true);
@@ -53,21 +54,22 @@ public class CoralEndeffactorSubsystem extends SubsystemBase{
         rightDiffRatio = 0.4; 
     }
 
-    public boolean beamBroken (){
-        isInIntakeNow(); 
-        return beamBreak.get(); //(true not broken) false broke
+    public boolean beamBroken2(){
+        return beamBreak2.get(); //(true not broken) false broke
     }
 
-    public boolean isInIntakeNow(){
-
-        return true; 
+    public boolean beamBroken1() {
+        return beamBreak1.get();
     }
 
+    public boolean isObjectIn() {
+        return this.beamBroken2() && !this.beamBroken1(); 
+    }
 
     @Override
     public void periodic(){
-
-        SmartDashboard.putBoolean("BeamBroken", beamBreak.get());
+        SmartDashboard.putBoolean("BeamBroken2", beamBreak2.get());
+        SmartDashboard.putBoolean("BeamBroken1", beamBreak1.get());
     }
 
 }

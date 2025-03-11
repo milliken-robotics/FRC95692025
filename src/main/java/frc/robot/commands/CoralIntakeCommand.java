@@ -29,11 +29,12 @@ public class CoralIntakeCommand extends Command{
     }
     @Override
     public void end(boolean interrupted){
-        new WaitCommand(0.045);
+        //new WaitCommand(0.045);
         coralEndeffactorSubsystem.stop();
     }
     @Override
     public boolean isFinished(){
-        return !coralEndeffactorSubsystem.beamBroken();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
-    }
+        return coralEndeffactorSubsystem.isObjectIn();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
+    } // if not broken and broken
+    //true not broken, false broken
 }

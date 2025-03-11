@@ -14,6 +14,7 @@ import frc.robot.commands.AlgaePivotDown;
 import frc.robot.commands.AlgaePivotMiddle;
 import frc.robot.commands.AlgaePivotUp;
 import frc.robot.commands.AlgaePivotUpper;
+import frc.robot.commands.AlgaeSeqIntake;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorL1Command;
@@ -25,6 +26,7 @@ import frc.robot.subsystems.CoralEndeffactorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Vision;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -53,6 +55,7 @@ public class RobotContainer {
   private final CoralEndeffactorSubsystem coralEndeffactorSubsystem = new CoralEndeffactorSubsystem(); 
   private final AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem = new AlgaeEndeffactorSubsystem(); 
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(); 
+  private final Vision vision = new Vision();
 
   private final CommandPS5Controller controllerP = new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
   
@@ -118,7 +121,7 @@ public class RobotContainer {
     controllerX.a().onTrue(new AlgaePivotDown(algaeEndeffactorSubsystem));
     controllerX.b().onTrue(new AlgaePivotUpper(algaeEndeffactorSubsystem));
 
-    controllerX.rightTrigger().onTrue(new AlgaeIntake(algaeEndeffactorSubsystem));
+    controllerX.rightTrigger().whileTrue(new AlgaeSeqIntake(algaeEndeffactorSubsystem).repeatedly());
     controllerX.leftTrigger().whileTrue(new AlgaeEject(algaeEndeffactorSubsystem));
 
     controllerX.povLeft().onTrue(Commands.runOnce(()-> coralEndeffactorSubsystem.diffRight()));

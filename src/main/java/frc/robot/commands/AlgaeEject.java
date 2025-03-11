@@ -11,7 +11,7 @@ public class AlgaeEject extends Command {
 
     public AlgaeEject(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
         this.algaeEndeffactorSubsystem = algaeEndeffactorSubsystem;
-        addRequirements(algaeEndeffactorSubsystem);
+        //addRequirements(algaeEndeffactorSubsystem);
     }
     
       @Override

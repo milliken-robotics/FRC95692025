@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
@@ -34,6 +37,7 @@ public class SwerveSubsystem extends SubsystemBase{
     SwerveDrive swerveDrive;
 
     public SwerveSubsystem(){
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
          try
             {
             swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED,
@@ -46,8 +50,10 @@ public class SwerveSubsystem extends SubsystemBase{
             {
             throw new RuntimeException(e);
             }  
+            swerveDrive.setHeadingCorrection(false);
+            swerveDrive.setCosineCompensator(false);
             setupPathPlanner();
-            RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+            //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     }
 
 
@@ -86,11 +92,17 @@ public class SwerveSubsystem extends SubsystemBase{
                 swerveDrive::getRobotVelocity,
                 // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 (speedsRobotRelative, moduleFeedForwards) -> {
+                    ChassisSpeeds correctedSpeeds = new ChassisSpeeds(
+                        speedsRobotRelative.vxMetersPerSecond, 
+                        speedsRobotRelative.vyMetersPerSecond,
+                        -speedsRobotRelative.omegaRadiansPerSecond
+                    );
+
                 if (enableFeedforward)
                 {
                     swerveDrive.drive(
                         speedsRobotRelative,
-                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                        swerveDrive.kinematics.toSwerveModuleStates(correctedSpeeds),
                         moduleFeedForwards.linearForces()
                                     );
                 } else
@@ -103,7 +115,7 @@ public class SwerveSubsystem extends SubsystemBase{
                     // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(0.79645, 0.0, 0.0),
                     // Translation PID constants
-                    new PIDConstants(0.008, 0.0, 0.0)
+                    new PIDConstants(0.02, 0.0, 0.0)
                     // Rotation PID constants
                 ),
                 config,
