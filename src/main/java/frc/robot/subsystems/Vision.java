@@ -72,7 +72,7 @@ public class Vision extends SubsystemBase{
     private PhotonCamera endEffectorCamera = new PhotonCamera("End Effector Camera"); 
     
     //stored value of robto cam postiont
-    private Transform3d robotToCam = new Transform3d(new Translation3d(-4.75, -10.375, 11.375), new Rotation3d(-90, 0, 0));
+    private Transform3d robotToCam = new Transform3d(new Translation3d(-0.121, -0.264, 0.289), new Rotation3d(-90, 0, 0));
     
     //calculator for pose
     private PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(
@@ -81,7 +81,7 @@ public class Vision extends SubsystemBase{
         robotToCam);
 
     //this is just for smart dashboard purposes
-    // private final Field2d field = new Field2d();
+    private final Field2d field = new Field2d();
 
     private List<PhotonTrackedTarget> currentAprilTags; 
 
@@ -90,12 +90,18 @@ public class Vision extends SubsystemBase{
 
     //estimated pose
     private Optional<EstimatedRobotPose> latestEstimatedPose = Optional.empty();
+
+    Pose3d estimatedRobotPose =  new Pose3d(0,0,0,new Rotation3d(0,0,0));
     
     //construct stuff
     public Vision(){
-        // SmartDashboard.putData("field", field);
+        SmartDashboard.putData("photon subsytem", field);
         referencePose = new Pose3d(0,0,0,new Rotation3d(0,0,0));
         
+    }
+
+    public Optional<EstimatedRobotPose> get(){
+        return latestEstimatedPose;
     }
 
     //get pose 3d 
@@ -132,29 +138,30 @@ public class Vision extends SubsystemBase{
             latestEstimatedPose = photonPoseEstimator.update(result);
         }
         photonPoseEstimator.setReferencePose(referencePose);
-        // SmartDashboard.putBoolean("has target", hasTargets);
+        SmartDashboard.putBoolean("has target", hasTargets);
 
 
-        // List<PhotonTrackedTarget> targets;
-        // PhotonTrackedTarget bestTarget;
-        // int targetId =0; 
+        List<PhotonTrackedTarget> targets;
+        PhotonTrackedTarget bestTarget;
+        int targetId =0; 
         
-        // if(hasTargets){
-        //     targets = result.getTargets();
-        //     bestTarget = result.getBestTarget();
-        //     targetId = bestTarget.fiducialId;
+        if(hasTargets){
+            targets = result.getTargets();
+            bestTarget = result.getBestTarget();
+            targetId = bestTarget.fiducialId;
 
-        //     if(fieldLayout.getTagPose(bestTarget.getFiducialId()).isPresent()){
-        //         Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(bestTarget.getBestCameraToTarget(), fieldLayout.getTagPose(bestTarget.getFiducialId()).get(), bestTarget.getBestCameraToTarget());
-        //         Pose2d robotconversion = new Pose2d(robotPose.getTranslation().getX(), robotPose.getTranslation().getY(), new Rotation2d(robotPose.getRotation().getZ()));
-        //         field.setRobotPose(robotconversion);
-        //     }
+            if(fieldLayout.getTagPose(bestTarget.getFiducialId()).isPresent()){
+                estimatedRobotPose = PhotonUtils.estimateFieldToRobotAprilTag(bestTarget.getBestCameraToTarget(), fieldLayout.getTagPose(bestTarget.getFiducialId()).get(), bestTarget.getBestCameraToTarget());
+                Pose2d robotconversion = new Pose2d(estimatedRobotPose.getTranslation().getX(), estimatedRobotPose.getTranslation().getY(), new Rotation2d(estimatedRobotPose.getRotation().getZ()));
+                field.setRobotPose(robotconversion);
+                
+            }
 
 
-        // } 
+        } 
         
        
-        // SmartDashboard.putNumber("id april", targetId);
+        SmartDashboard.putNumber("id april", targetId);
 
     }
 

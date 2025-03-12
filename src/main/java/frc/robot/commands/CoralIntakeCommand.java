@@ -29,7 +29,7 @@ public class CoralIntakeCommand extends Command{
     }
     @Override
     public void end(boolean interrupted){
-        //new WaitCommand(0.045);
+        new WaitCommand(0.045);
         coralEndeffactorSubsystem.stop();
     }
     @Override

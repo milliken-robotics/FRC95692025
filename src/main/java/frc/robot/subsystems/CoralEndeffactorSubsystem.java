@@ -63,7 +63,7 @@ public class CoralEndeffactorSubsystem extends SubsystemBase{
     }
 
     public boolean isObjectIn() {
-        return this.beamBroken2() && !this.beamBroken1(); 
+        return beamBroken2(); //&& !this.beamBroken1(); 
     }
 
     @Override

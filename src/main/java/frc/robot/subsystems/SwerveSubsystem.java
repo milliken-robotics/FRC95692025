@@ -43,6 +43,7 @@ public class SwerveSubsystem extends SubsystemBase{
 
     Vision vision = new Vision();
     private final Field2d field = new Field2d();
+    private final Field2d photonfield2d = new Field2d();
 
     File directory = new File(Filesystem.getDeployDirectory(),"swerve");
     SwerveDrive swerveDrive;
@@ -50,6 +51,7 @@ public class SwerveSubsystem extends SubsystemBase{
     public SwerveSubsystem(){
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SmartDashboard.putData("swerve + photon field", field);
+        SmartDashboard.putData("photon field 2d", photonfield2d);
          try
             {
             swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED,
@@ -177,17 +179,33 @@ public class SwerveSubsystem extends SubsystemBase{
 
         Optional<Pose2d> visionPoseOpt = vision.getPose2d();
         Optional<Double> timestampOpt = vision.getTimestamp();
-
-        if (visionPoseOpt.isPresent() && timestampOpt.isPresent()) {
+        boolean isTherePhoton = false; 
+        SmartDashboard.putBoolean("is there photon", isTherePhoton);
+        
+        if (visionPoseOpt.isPresent()) {
             swerveDrive.addVisionMeasurement(visionPoseOpt.get(), timestampOpt.get());
+            photonfield2d.setRobotPose(visionPoseOpt.get());
+            isTherePhoton = true;
+        //      SmartDashboard.putNumber("photon Robot X", visionPoseOpt.get().getX());
+        // SmartDashboard.putNumber("photon Robot Y", visionPoseOpt.get().getY());
+        // SmartDashboard.putNumber("photon Robot Heading (deg)",visionPoseOpt.get().getRotation().getDegrees());
         }
+        else{
+            isTherePhoton = false;
+        }
+        // visionPoseOpt.ifPresent(est->{
+        //     swerveDrive.addVisionMeasurement(visionPoseOpt.get(), timestampOpt.get());
+        //     photonfield2d.setRobotPose(visionPoseOpt.get());
+        // });
 
         Pose2d currentPose = swerveDrive.getPose();
         field.setRobotPose(currentPose);
 
-        // SmartDashboard.putNumber("Robot X", currentPose.getTranslation().getX());
-        // SmartDashboard.putNumber("Robot Y", currentPose.getTranslation().getY());
-        // SmartDashboard.putNumber("Robot Heading (deg)", currentPose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Robot X", currentPose.getTranslation().getX());
+        SmartDashboard.putNumber("Robot Y", currentPose.getTranslation().getY());
+        SmartDashboard.putNumber("Robot Heading (deg)", currentPose.getRotation().getDegrees());
+
+       
     }
 
     public Rotation2d getHeading() {

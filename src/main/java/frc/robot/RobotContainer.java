@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -156,6 +157,7 @@ public class RobotContainer {
     controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
 
     controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
+    controllerP.povUp().onTrue(new InstantCommand(()->driveBase.resetOdemWithVision()));
 
 
     controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));
