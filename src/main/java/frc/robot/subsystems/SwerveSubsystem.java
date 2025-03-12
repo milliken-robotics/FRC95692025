@@ -1,9 +1,16 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import java.io.File;
+import java.util.Optional;
 import java.util.function.Supplier;
 
-import static edu.wpi.first.units.Units.Meter;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,33 +18,29 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import frc.robot.Constants.*;
+import frc.robot.Constants.SwerveConstants;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import edu.wpi.first.wpilibj2.command.Commands;
 
 
 public class SwerveSubsystem extends SubsystemBase{
 
-    
+    Vision vision = new Vision();
+    private final Field2d field = new Field2d();
 
     File directory = new File(Filesystem.getDeployDirectory(),"swerve");
     SwerveDrive swerveDrive;
 
     public SwerveSubsystem(){
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+        SmartDashboard.putData("swerve + photon field", field);
          try
             {
             swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED,
@@ -81,6 +84,7 @@ public class SwerveSubsystem extends SubsystemBase{
         try
         {
             config = RobotConfig.fromGUISettings();
+            
 
             final boolean enableFeedforward = true;
             // Configure AutoBuilder last
@@ -156,11 +160,25 @@ public class SwerveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
-        SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
-        SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
-        SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
-        SmartDashboard.putNumber("heading", getHeading().getDegrees());
+        // SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
+        // SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
+        // SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
+        // SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
+        // SmartDashboard.putNumber("heading", getHeading().getDegrees());
+
+        Optional<Pose2d> visionPoseOpt = vision.getPose2d();
+        Optional<Double> timestampOpt = vision.getTimestamp();
+
+        if (visionPoseOpt.isPresent() && timestampOpt.isPresent()) {
+            swerveDrive.addVisionMeasurement(visionPoseOpt.get(), timestampOpt.get());
+        }
+
+        Pose2d currentPose = swerveDrive.getPose();
+        field.setRobotPose(currentPose);
+
+        // SmartDashboard.putNumber("Robot X", currentPose.getTranslation().getX());
+        // SmartDashboard.putNumber("Robot Y", currentPose.getTranslation().getY());
+        // SmartDashboard.putNumber("Robot Heading (deg)", currentPose.getRotation().getDegrees());
     }
 
     public Rotation2d getHeading() {
@@ -174,6 +192,14 @@ public class SwerveSubsystem extends SubsystemBase{
             resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
         } else {
             zeroGyro();
+        }
+    }
+
+    public void resetOdemWithVision(){
+        Optional<Pose2d> visionPoseOpt = vision.getPose2d();
+        if (visionPoseOpt.isPresent()) {
+            // Reset odometry wtih vis
+            swerveDrive.resetOdometry(visionPoseOpt.get());
         }
     }
 

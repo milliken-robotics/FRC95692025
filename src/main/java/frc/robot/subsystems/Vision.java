@@ -18,6 +18,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -80,7 +81,9 @@ public class Vision extends SubsystemBase{
         robotToCam);
 
     //this is just for smart dashboard purposes
-    private final Field2d field = new Field2d();
+    // private final Field2d field = new Field2d();
+
+    private List<PhotonTrackedTarget> currentAprilTags; 
 
     //last reference point
     private Pose3d referencePose; 
@@ -90,20 +93,31 @@ public class Vision extends SubsystemBase{
     
     //construct stuff
     public Vision(){
-        SmartDashboard.putData("field", field);
+        // SmartDashboard.putData("field", field);
         referencePose = new Pose3d(0,0,0,new Rotation3d(0,0,0));
         
     }
 
-    // public Optional<Pose3d> getEstimatedGlobalPose (){
-        
-    //     if(latestEstimatedPose.isPresent()){
-    //         //Pose3d pose = latestEstimatedPose.get();
-    //     }
-    //     else {
+    //get pose 3d 
+    public Optional<Pose3d> getPose3d() {
+        return latestEstimatedPose.map(stuff -> stuff.estimatedPose);
+    }
 
-    //     }
-    // }
+    //get pose 2d (to who ever is reading my code, use this for odom) 
+    public Optional<Pose2d> getPose2d(){
+        return getPose3d().map(pose3d -> pose3d.toPose2d());
+    }
+
+    public List<PhotonTrackedTarget> getAprilTags(){
+        return currentAprilTags;
+    }
+    public void setReferencePose (Pose3d refPose3d){
+        referencePose = refPose3d;
+    }
+
+    public Optional<Double> getTimestamp() {
+        return latestEstimatedPose.map(x -> x.timestampSeconds);
+    }
 
     //update the pose every so often and also set the refrence point 
     @Override
@@ -112,6 +126,7 @@ public class Vision extends SubsystemBase{
 
         var result = endEffectorCamera.getLatestResult();
         boolean hasTargets = result.hasTargets();
+        currentAprilTags = result.getTargets();
 
         if(hasTargets){
             latestEstimatedPose = photonPoseEstimator.update(result);
@@ -141,7 +156,16 @@ public class Vision extends SubsystemBase{
        
         // SmartDashboard.putNumber("id april", targetId);
 
-
-
     }
+
+    // public Optional<Pose3d> getEstimatedGlobalPose (){
+
+    // if(latestEstimatedPose.isPresent()){
+    // //Pose3d pose = latestEstimatedPose.get();
+    // }
+    // else {
+
+    // }
+    // }
+
 }
