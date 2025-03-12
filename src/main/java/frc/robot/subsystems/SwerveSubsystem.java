@@ -4,13 +4,19 @@ import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.util.Units;
+import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.SwerveConstants;
 import swervelib.SwerveDrive;
+import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
@@ -221,5 +228,35 @@ public class SwerveSubsystem extends SubsystemBase{
     public void resetOdometry(Pose2d initialHolonomicPose) {
         swerveDrive.resetOdometry(initialHolonomicPose);
     }
+
+    public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+    {
+        return run(() -> {
+        // Make the robot move
+        swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
+                                translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+                                translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
+                            Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
+                            true,
+                            false);
+        });
+    }
+
+    public Command driveToPose(Pose2d pose)
+    {
+    // constraint
+        PathConstraints constraints = new PathConstraints(
+            swerveDrive.getMaximumChassisVelocity(), 4.0,
+            swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+        return AutoBuilder.pathfindToPose(
+            pose,
+            constraints,
+            edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                        );
+    }
+
+    
+
 
 }
