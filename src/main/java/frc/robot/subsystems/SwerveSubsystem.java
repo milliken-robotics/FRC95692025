@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.SwerveConstants;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -56,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase{
             swerveDrive.setHeadingCorrection(false);
             swerveDrive.setCosineCompensator(false);
             setupPathPlanner();
-            //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+            RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     }
 
 
