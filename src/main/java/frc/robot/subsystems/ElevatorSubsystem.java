@@ -29,6 +29,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private double  currentLeft, currentRight = 0 ; 
 
+    private int level = 0; 
+
     public ElevatorSubsystem(){
 
         elevatorMotorLeft.setInverted(true);
@@ -36,6 +38,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotorEncoder.setPosition(0);
         rightMotorEncoder.setPosition(0);
        // elevatorMotorLeft.configure(null, null, null)
+    }
+
+    public void setLevel(int curlevel){
+        level = curlevel;
+    }
+    public int getLevel(){
+        return level; 
     }
 
 

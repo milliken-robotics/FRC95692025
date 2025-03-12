@@ -3,16 +3,12 @@ package frc.robot.subsystems;
 import java.io.File;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.swerve.SwerveModule;
-
 import static edu.wpi.first.units.Units.Meter;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,59 +17,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.*;
 import swervelib.SwerveDrive;
-import swervelib.SwerveInputStream;
-import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
-import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.Constants;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import swervelib.SwerveController;
-import swervelib.SwerveDrive;
-import swervelib.SwerveDriveTest;
-import swervelib.math.SwerveMath;
-import swervelib.parser.SwerveControllerConfiguration;
-import swervelib.parser.SwerveDriveConfiguration;
-import swervelib.parser.SwerveParser;
-import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 
 public class SwerveSubsystem extends SubsystemBase{
@@ -81,9 +34,10 @@ public class SwerveSubsystem extends SubsystemBase{
     
 
     File directory = new File(Filesystem.getDeployDirectory(),"swerve");
-    SwerveDrive  swerveDrive;
+    SwerveDrive swerveDrive;
 
     public SwerveSubsystem(){
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
          try
             {
             swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED,
@@ -96,16 +50,13 @@ public class SwerveSubsystem extends SubsystemBase{
             {
             throw new RuntimeException(e);
             }  
+            swerveDrive.setHeadingCorrection(false);
+            swerveDrive.setCosineCompensator(false);
             setupPathPlanner();
-            RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::resetHeading));
+            //RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     }
 
-    // public void zeroGyroWithAlliance(){
-    //     if(isRedAlliance()){
-    //         resetHeading();
-    //         resetOdemetry(new Pose2D(getPose().getTranslation(), Rotation2d.));
-    //     }
-    // }
+
 
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
@@ -141,11 +92,17 @@ public class SwerveSubsystem extends SubsystemBase{
                 swerveDrive::getRobotVelocity,
                 // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 (speedsRobotRelative, moduleFeedForwards) -> {
+                    ChassisSpeeds correctedSpeeds = new ChassisSpeeds(
+                        speedsRobotRelative.vxMetersPerSecond, 
+                        speedsRobotRelative.vyMetersPerSecond,
+                        -speedsRobotRelative.omegaRadiansPerSecond
+                    );
+
                 if (enableFeedforward)
                 {
                     swerveDrive.drive(
                         speedsRobotRelative,
-                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                        swerveDrive.kinematics.toSwerveModuleStates(correctedSpeeds),
                         moduleFeedForwards.linearForces()
                                     );
                 } else
@@ -156,9 +113,9 @@ public class SwerveSubsystem extends SubsystemBase{
                 // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 new PPHolonomicDriveController(
                     // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(0.70645, 0.0, 0.0),
+                    new PIDConstants(0.79645, 0.0, 0.0),
                     // Translation PID constants
-                    new PIDConstants(0.012, 0.0, 0.0)
+                    new PIDConstants(0.02, 0.0, 0.0)
                     // Rotation PID constants
                 ),
                 config,
@@ -199,9 +156,42 @@ public class SwerveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        // SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
+        SmartDashboard.putNumber("heading", getHeading().getDegrees());
     }
+
+    public Rotation2d getHeading() {
+        return getPose().getRotation();
+    }
+
+    public void zeroGyroWithAlliance() {
+        if (isRedAlliance()) {
+            zeroGyro();
+            // Set the pose 180 degrees
+            resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+        } else {
+            zeroGyro();
+        }
+    }
+
+    private boolean isRedAlliance() {
+        var alliance = DriverStation.getAlliance();
+        return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    }
+    
+    public void zeroGyro() {
+        swerveDrive.zeroGyro();
+    }
+
+    public Pose2d getPose() {
+        return swerveDrive.getPose();
+    }
+
+    public void resetOdometry(Pose2d initialHolonomicPose) {
+        swerveDrive.resetOdometry(initialHolonomicPose);
+    }
+
 }

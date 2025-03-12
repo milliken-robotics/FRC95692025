@@ -15,6 +15,7 @@ public class ElevatorL3Command extends Command{
     
       @Override
     public void initialize(){
+        elevatorSubsystem.setLevel(3);
     }
 
     @Override

@@ -29,7 +29,8 @@ public final class Constants {
     public static final int IT_ELEVATOR_R = 41;
     public static final int IT_CORAL_L = 53;
     public static final int IT_CORAL_R = 2;
-    public static final int IT_BEAMBREAK = 9;
+    public static final int IT_BEAMBREAK2 = 9;
+    public static final int IT_BEAMBREAK1 = 8;
     public static final int IT_ALGAE = 38;
     public static final int IT_ALGAE_PIVOT = 39;
   }
@@ -38,7 +39,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstnats {
-    public static final double L3 = 900; 
+    public static final double L3 = 880; 
     public static final double L2 = 250; 
     public static final double L1 = 30; 
     public static final double zerod = 25; 
