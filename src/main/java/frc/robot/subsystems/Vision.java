@@ -52,9 +52,15 @@ public class Vision extends SubsystemBase{
         
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose (){
-        return latestEstimatedPose;
-    }
+    // public Optional<Pose3d> getEstimatedGlobalPose (){
+        
+    //     if(latestEstimatedPose.isPresent()){
+    //         //Pose3d pose = latestEstimatedPose.get();
+    //     }
+    //     else {
+
+    //     }
+    // }
 
     //update the pose every so often and also set the refrence point 
     @Override
