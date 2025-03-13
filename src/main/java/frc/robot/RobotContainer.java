@@ -28,7 +28,7 @@ import frc.robot.commands.AlgaeCommands.AlgaeSeqIntake;
 import frc.robot.commands.AutoAlign.AlignAprilTag18;
 import frc.robot.commands.CoralCommands.CoralEjectCommand;
 import frc.robot.commands.CoralCommands.CoralIntakeCommand;
-
+import frc.robot.commands.ElevatorCommands.ElevatorCycle;
 import frc.robot.commands.ElevatorCommands.ElevatorL1Command;
 import frc.robot.commands.ElevatorCommands.ElevatorL2Command;
 import frc.robot.commands.ElevatorCommands.ElevatorL3Command;
@@ -189,11 +189,8 @@ public class RobotContainer {
     }));
 
     // R2 -> decrement level
-    controllerP.R1().onTrue(new RunCommand(() -> {
-      // decrement level (wrap around with +3)
-      elevatorSubsystem.level = (elevatorSubsystem.level - 1 + 3) % 3;
-      scheduleElevatorCommandByLevel();
-    }));
+    controllerP.R1().onTrue(new ElevatorCycle(elevatorSubsystem, 1));
+    controllerP.L1().onTrue(new ElevatorCycle(elevatorSubsystem, -1));
 
     controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
     controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
