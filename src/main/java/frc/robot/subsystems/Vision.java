@@ -88,10 +88,10 @@ public class Vision extends SubsystemBase{
     private final Field2d field = new Field2d();
 
     private List<PhotonTrackedTarget> currentAprilTags; 
-    private Optional<Pose3d> tagPose3dOpt;
-    public double xTag = 0;
-    public double yTag = 0;;
-    public double rotationTag = 0;
+    // private Optional<Pose3d> tagPose3dOpt;
+    // public double xTag = 0;
+    // public double yTag = 0;;
+    // public double rotationTag = 0;
 
     //last reference point
     private Pose3d referencePose; 
@@ -163,7 +163,7 @@ public class Vision extends SubsystemBase{
                 estimatedRobotPose = PhotonUtils.estimateFieldToRobotAprilTag(bestTarget.getBestCameraToTarget(), fieldLayout.getTagPose(bestTarget.getFiducialId()).get(), bestTarget.getBestCameraToTarget());
                 Pose2d robotconversion = new Pose2d(estimatedRobotPose.getTranslation().getX(), estimatedRobotPose.getTranslation().getY(), new Rotation2d(estimatedRobotPose.getRotation().getZ()));
                 field.setRobotPose(robotconversion);
-                tagPose3dOpt = fieldLayout.getTagPose(targetId);
+                // tagPose3dOpt = fieldLayout.getTagPose(targetId);
                 
             }
 
@@ -172,22 +172,22 @@ public class Vision extends SubsystemBase{
 
      
 
-        if (tagPose3dOpt.isPresent()) {
+        // if (tagPose3dOpt.isPresent()) {
             // Convert the 3D pose to a 2D pose
-            Pose2d tagPose2d = tagPose3dOpt.get().toPose2d();
+            // Pose2d tagPose2d = tagPose3dOpt.get().toPose2d();
 
-            // Extract x, y, and rotation (in degrees)
-            xTag = tagPose2d.getTranslation().getX();
-            yTag = tagPose2d.getTranslation().getY();
-            rotationTag = tagPose2d.getRotation().getDegrees();
+            // // Extract x, y, and rotation (in degrees)
+            // xTag = tagPose2d.getTranslation().getX();
+            // yTag = tagPose2d.getTranslation().getY();
+            // rotationTag = tagPose2d.getRotation().getDegrees();
 
             // For example, publish them to SmartDashboard
             
-        }
+        // }
 
-        SmartDashboard.putNumber("AprilTag X", xTag);
-        SmartDashboard.putNumber("AprilTag Y", yTag);
-        SmartDashboard.putNumber("AprilTag Rotation (deg)", rotationTag);
+        SmartDashboard.putNumber("AprilTag X", fieldLayout.getTagPose(18).get().getX());
+        SmartDashboard.putNumber("AprilTag Y", fieldLayout.getTagPose(18).get().getY());
+        SmartDashboard.putNumber("AprilTag Rotation (deg)", fieldLayout.getTagPose(18).get().getRotation().getAngle());
         
        
         SmartDashboard.putNumber("id april", targetId);
