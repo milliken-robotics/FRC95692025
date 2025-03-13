@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.CoralCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,7 +31,7 @@ public class CoralEjectCommand extends Command{
             coralEndeffactorSubsystem.setVoltDiff(4);
         }
         else{
-            coralEndeffactorSubsystem.setVolt(12);
+            coralEndeffactorSubsystem.setVolt(8);
         }
     }
     @Override

@@ -29,7 +29,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private double  currentLeft, currentRight = 0 ; 
 
-    private int level = 0; 
+    public int level = 1; 
 
     public ElevatorSubsystem(){
 
@@ -62,6 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("current right", currentRight);
 
         // SmartDashboard.putNumber("double check", doublecheck); 
+        SmartDashboard.putNumber("cur level", level);
         
     }
     public void setPoint (double target){

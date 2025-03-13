@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.ElevatorCommands;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,7 +15,7 @@ public class ElevatorZeroCommand extends Command{
     
       @Override
     public void initialize(){
-        elevatorSubsystem.setLevel(0);
+        elevatorSubsystem.setLevel(1);
     }
 
     @Override

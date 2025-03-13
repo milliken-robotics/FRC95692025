@@ -1,17 +1,17 @@
-package frc.robot.commands;
+package frc.robot.commands.AlgaeCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeEndeffactorSubsystem;
 
-public class AlgaeStop extends Command {
+public class AlgaeEject extends Command {
     
       private final AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem; 
       private final Timer time = new Timer();
 
-    public AlgaeStop(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
+    public AlgaeEject(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
         this.algaeEndeffactorSubsystem = algaeEndeffactorSubsystem;
-        addRequirements(algaeEndeffactorSubsystem);
+        //addRequirements(algaeEndeffactorSubsystem);
     }
     
       @Override
@@ -20,7 +20,7 @@ public class AlgaeStop extends Command {
 
     @Override
     public void execute(){
-        algaeEndeffactorSubsystem.setSpeed(0);
+        algaeEndeffactorSubsystem.setSpeed(12);
        
     }
     @Override

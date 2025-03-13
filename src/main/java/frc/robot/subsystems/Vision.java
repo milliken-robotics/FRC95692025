@@ -64,17 +64,17 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 
 
 
-public class Vision extends SubsystemBase{
+    public class Vision extends SubsystemBase{
     //field 
     public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     
     //camera
     private PhotonCamera endEffectorCameraR = new PhotonCamera("End Effector Camera"); 
-    private PhotonCamera endEffectorCameraL = new PhotonCamera("Left Camera");
+    private PhotonCamera endEffectorCameraL = new PhotonCamera("left camera");
     
     //stored value of robto cam postiont
     private Transform3d robotToCamR = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338), new Rotation3d(-90, 0, 135));
-    private Transform3d robotToCamL = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338),
+    private Transform3d robotToCamL = new Transform3d(new Translation3d(-0.1317, 0, 0.338),
             new Rotation3d(-90, 0, 135));
 
     //x: 0.327
@@ -141,7 +141,7 @@ public class Vision extends SubsystemBase{
     }
 
     public Optional<Pose2d> getPose2dL() {
-        return getPose3dR().map(pose3d -> pose3d.toPose2d());
+        return getPose3dL().map(pose3d -> pose3d.toPose2d());
     }
 
     public List<PhotonTrackedTarget> getAprilTags(){
@@ -178,8 +178,8 @@ public class Vision extends SubsystemBase{
             latestEstimatedPoseL = photonPoseEstimatorL.update(resultL);
         }
         photonPoseEstimatorR.setReferencePose(referencePose);
-        SmartDashboard.putBoolean("has target", hasTargetsR);
-
+        SmartDashboard.putBoolean("has target R", hasTargetsR);
+        SmartDashboard.putBoolean("has target L", hasTargetsL);
 
         List<PhotonTrackedTarget> targets;
         PhotonTrackedTarget bestTarget;

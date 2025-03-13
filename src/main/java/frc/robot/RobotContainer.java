@@ -18,18 +18,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AlgaeEject;
-import frc.robot.commands.AlgaePivotDown;
-import frc.robot.commands.AlgaePivotMiddle;
-import frc.robot.commands.AlgaePivotUp;
-import frc.robot.commands.AlgaePivotUpper;
-import frc.robot.commands.AlgaeSeqIntake;
-import frc.robot.commands.CoralEjectCommand;
-import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.ElevatorL1Command;
-import frc.robot.commands.ElevatorL2Command;
-import frc.robot.commands.ElevatorL3Command;
-import frc.robot.commands.ElevatorZeroCommand;
+import frc.robot.commands.AlgaeCommands.AlgaeEject;
+import frc.robot.commands.AlgaeCommands.AlgaePivotDown;
+import frc.robot.commands.AlgaeCommands.AlgaePivotMiddle;
+import frc.robot.commands.AlgaeCommands.AlgaePivotUp;
+import frc.robot.commands.AlgaeCommands.AlgaePivotUpper;
+import frc.robot.commands.AlgaeCommands.AlgaeSeqIntake;
+import frc.robot.commands.AutoAlign.AlignAprilTag18;
+import frc.robot.commands.CoralCommands.CoralEjectCommand;
+import frc.robot.commands.CoralCommands.CoralIntakeCommand;
+
+import frc.robot.commands.ElevatorCommands.ElevatorL1Command;
+import frc.robot.commands.ElevatorCommands.ElevatorL2Command;
+import frc.robot.commands.ElevatorCommands.ElevatorL3Command;
+import frc.robot.commands.ElevatorCommands.ElevatorZeroCommand;
 import frc.robot.subsystems.AlgaeEndeffactorSubsystem;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -153,11 +155,14 @@ public class RobotContainer {
     controllerP.circle().onTrue(new ElevatorZeroCommand(elevatorSubsystem));
     controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
     controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
+
+
+
     controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
     controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
 
     controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
-    controllerP.povUp().onTrue(new InstantCommand(()->driveBase.resetOdemWithVision()));
+    controllerP.povUp().onTrue(new AlignAprilTag18(driveBase));
 
 
     controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));

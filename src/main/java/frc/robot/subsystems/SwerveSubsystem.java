@@ -128,9 +128,9 @@ public class SwerveSubsystem extends SubsystemBase{
                 // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 new PPHolonomicDriveController(
                     // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(0.79645, 0.0, 0.0),
+                    new PIDConstants(4.79645, 0.0, 0.0),
                     // Translation PID constants
-                    new PIDConstants(0.02, 0.0, 0.0)
+                    new PIDConstants(5, 0.0, 0.0) //0.02
                     // Rotation PID constants
                 ),
                 config,
@@ -184,8 +184,7 @@ public class SwerveSubsystem extends SubsystemBase{
         Optional<Double> timestampOptL = vision.getTimestampL();
         boolean isTherePhotonR = false; 
         boolean isTherePhotonL = false;
-        SmartDashboard.putBoolean("is there photon R", isTherePhotonR);
-        SmartDashboard.putBoolean("is there photon L", isTherePhotonL);
+      
         
         if (visionPoseOptR.isPresent()) {
             swerveDrive.addVisionMeasurement(visionPoseOptR.get(), timestampOptR.get());
@@ -222,6 +221,8 @@ public class SwerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Robot X", currentPose.getTranslation().getX());
         SmartDashboard.putNumber("Robot Y", currentPose.getTranslation().getY());
         SmartDashboard.putNumber("Robot Heading (deg)", currentPose.getRotation().getDegrees());
+        SmartDashboard.putBoolean("is there photon R", isTherePhotonR);
+        SmartDashboard.putBoolean("is there photon L", isTherePhotonL);
         // double xTag = vision.xTag;
         // double yTag = vision.yTag;
         // double rotationTag = vision.rotationTag;
@@ -281,12 +282,26 @@ public class SwerveSubsystem extends SubsystemBase{
         });
     }
 
-    public Command driveToPose(Pose2d pose)
+    // public Command driveToPose(Pose2d pose)
+    // {
+    // // constraint
+    //     PathConstraints constraints = new PathConstraints(
+    //         3, 4.0,
+    //         8, Units.degreesToRadians(720));
+
+    //     return AutoBuilder.pathfindToPose(
+    //         pose,
+    //         constraints,
+    //         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+    //                                     );
+    // }
+
+       public Command driveToPose(Pose2d pose)
     {
     // constraint
         PathConstraints constraints = new PathConstraints(
-            swerveDrive.getMaximumChassisVelocity(), 4.0,
-            swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+            2, 2.0,
+            10, Units.degreesToRadians(720));
 
         return AutoBuilder.pathfindToPose(
             pose,

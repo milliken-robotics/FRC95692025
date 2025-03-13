@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.ElevatorCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstnats;
@@ -15,7 +15,7 @@ public class ElevatorL1Command extends Command{
     
       @Override
     public void initialize(){
-        elevatorSubsystem.setLevel(1);
+        elevatorSubsystem.setLevel(0);
     }
 
     @Override

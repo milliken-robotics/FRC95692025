@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.AlgaeCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.AlgaeEndeffactorSubsystem;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
 
-public class AlgaePivotUp extends Command {
+public class AlgaePivotDown extends Command {
 
       private final AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem; 
       private final Timer time = new Timer();
 
-    public AlgaePivotUp(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
+    public AlgaePivotDown(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
         this.algaeEndeffactorSubsystem = algaeEndeffactorSubsystem;
         addRequirements(algaeEndeffactorSubsystem);
     }
@@ -22,7 +22,7 @@ public class AlgaePivotUp extends Command {
 
     @Override
     public void execute(){
-        algaeEndeffactorSubsystem.algaeSetPoint(0.9);
+        algaeEndeffactorSubsystem.algaeSetPoint(0);
        
     }
     @Override
