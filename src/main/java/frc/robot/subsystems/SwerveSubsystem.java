@@ -177,21 +177,39 @@ public class SwerveSubsystem extends SubsystemBase{
         // SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
         // SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
-        Optional<Pose2d> visionPoseOpt = vision.getPose2d();
-        Optional<Double> timestampOpt = vision.getTimestamp();
-        boolean isTherePhoton = false; 
-        SmartDashboard.putBoolean("is there photon", isTherePhoton);
+        Optional<Pose2d> visionPoseOptR = vision.getPose2dR();
+        Optional<Double> timestampOptR = vision.getTimestampR();
+
+        Optional<Pose2d> visionPoseOptL = vision.getPose2dL();
+        Optional<Double> timestampOptL = vision.getTimestampL();
+        boolean isTherePhotonR = false; 
+        boolean isTherePhotonL = false;
+        SmartDashboard.putBoolean("is there photon R", isTherePhotonR);
+        SmartDashboard.putBoolean("is there photon L", isTherePhotonL);
         
-        if (visionPoseOpt.isPresent()) {
-            swerveDrive.addVisionMeasurement(visionPoseOpt.get(), timestampOpt.get());
-            photonfield2d.setRobotPose(visionPoseOpt.get());
-            isTherePhoton = true;
+        if (visionPoseOptR.isPresent()) {
+            swerveDrive.addVisionMeasurement(visionPoseOptR.get(), timestampOptR.get());
+            photonfield2d.setRobotPose(visionPoseOptR.get());
+            isTherePhotonR = true;
         //      SmartDashboard.putNumber("photon Robot X", visionPoseOpt.get().getX());
         // SmartDashboard.putNumber("photon Robot Y", visionPoseOpt.get().getY());
         // SmartDashboard.putNumber("photon Robot Heading (deg)",visionPoseOpt.get().getRotation().getDegrees());
         }
         else{
-            isTherePhoton = false;
+            isTherePhotonR = false;
+        }
+
+        if (visionPoseOptL.isPresent()) {
+            swerveDrive.addVisionMeasurement(visionPoseOptL.get(), timestampOptL.get());
+            photonfield2d.setRobotPose(visionPoseOptL.get());
+            isTherePhotonL = true;
+            // SmartDashboard.putNumber("photon Robot X", visionPoseOpt.get().getX());
+            // SmartDashboard.putNumber("photon Robot Y", visionPoseOpt.get().getY());
+            // SmartDashboard.putNumber("photon Robot Heading
+            // (deg)",visionPoseOpt.get().getRotation().getDegrees());
+        } 
+        else {
+            isTherePhotonL = false;
         }
         // visionPoseOpt.ifPresent(est->{
         //     swerveDrive.addVisionMeasurement(visionPoseOpt.get(), timestampOpt.get());
@@ -226,7 +244,7 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public void resetOdemWithVision(){
-        Optional<Pose2d> visionPoseOpt = vision.getPose2d();
+        Optional<Pose2d> visionPoseOpt = vision.getPose2dR();
         if (visionPoseOpt.isPresent()) {
             // Reset odometry wtih vis
             swerveDrive.resetOdometry(visionPoseOpt.get());

@@ -69,20 +69,27 @@ public class Vision extends SubsystemBase{
     public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     
     //camera
-    private PhotonCamera endEffectorCamera = new PhotonCamera("End Effector Camera"); 
+    private PhotonCamera endEffectorCameraR = new PhotonCamera("End Effector Camera"); 
+    private PhotonCamera endEffectorCameraL = new PhotonCamera("Left Camera");
     
     //stored value of robto cam postiont
-    private Transform3d robotToCam = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338), new Rotation3d(-90, 0, 135));
+    private Transform3d robotToCamR = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338), new Rotation3d(-90, 0, 135));
+    private Transform3d robotToCamL = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338),
+            new Rotation3d(-90, 0, 135));
 
     //x: 0.327
     //y: 0.1317
     //z: 0.338
     
     //calculator for pose
-    private PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(
+    private PhotonPoseEstimator photonPoseEstimatorR = new PhotonPoseEstimator(
         fieldLayout, 
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        robotToCam);
+        robotToCamR);
+    private PhotonPoseEstimator photonPoseEstimatorL = new PhotonPoseEstimator(
+        fieldLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        robotToCamL);
 
     //this is just for smart dashboard purposes
     private final Field2d field = new Field2d();
@@ -97,9 +104,11 @@ public class Vision extends SubsystemBase{
     private Pose3d referencePose; 
 
     //estimated pose
-    private Optional<EstimatedRobotPose> latestEstimatedPose = Optional.empty();
+    private Optional<EstimatedRobotPose> latestEstimatedPoseR = Optional.empty();
+    private Optional<EstimatedRobotPose> latestEstimatedPoseL = Optional.empty();
 
-    Pose3d estimatedRobotPose =  new Pose3d(0,0,0,new Rotation3d(0,0,0));
+    Pose3d estimatedRobotPoseR =  new Pose3d(0,0,0,new Rotation3d(0,0,0));
+    Pose3d estimatedRobotPoseL = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
     
     //construct stuff
     public Vision(){
@@ -108,18 +117,31 @@ public class Vision extends SubsystemBase{
         
     }
 
-    public Optional<EstimatedRobotPose> get(){
-        return latestEstimatedPose;
+    public Optional<EstimatedRobotPose> getR() {
+        return latestEstimatedPoseR;
     }
+    
+    public Optional<EstimatedRobotPose> getL() {
+        return latestEstimatedPoseL;
+    }
+    
 
     //get pose 3d 
-    public Optional<Pose3d> getPose3d() {
-        return latestEstimatedPose.map(stuff -> stuff.estimatedPose);
+    public Optional<Pose3d> getPose3dR() {
+        return latestEstimatedPoseR.map(stuff -> stuff.estimatedPose);
+    }
+    
+    public Optional<Pose3d> getPose3dL() {
+        return latestEstimatedPoseL.map(stuff -> stuff.estimatedPose);
     }
 
     //get pose 2d (to who ever is reading my code, use this for odom) 
-    public Optional<Pose2d> getPose2d(){
-        return getPose3d().map(pose3d -> pose3d.toPose2d());
+    public Optional<Pose2d> getPose2dR(){
+        return getPose3dR().map(pose3d -> pose3d.toPose2d());
+    }
+
+    public Optional<Pose2d> getPose2dL() {
+        return getPose3dR().map(pose3d -> pose3d.toPose2d());
     }
 
     public List<PhotonTrackedTarget> getAprilTags(){
@@ -129,24 +151,34 @@ public class Vision extends SubsystemBase{
         referencePose = refPose3d;
     }
 
-    public Optional<Double> getTimestamp() {
-        return latestEstimatedPose.map(x -> x.timestampSeconds);
+    public Optional<Double> getTimestampR() {
+        return latestEstimatedPoseR.map(x -> x.timestampSeconds);
     }
 
+    public Optional<Double> getTimestampL() {
+        return latestEstimatedPoseL.map(x -> x.timestampSeconds);
+    }
     //update the pose every so often and also set the refrence point 
     @Override
     public void periodic(){
 
 
-        var result = endEffectorCamera.getLatestResult();
-        boolean hasTargets = result.hasTargets();
-        currentAprilTags = result.getTargets();
+        var resultR = endEffectorCameraR.getLatestResult();
+        boolean hasTargetsR = resultR.hasTargets();
+        currentAprilTags = resultR.getTargets();
 
-        if(hasTargets){
-            latestEstimatedPose = photonPoseEstimator.update(result);
+        var resultL = endEffectorCameraL.getLatestResult();
+        boolean hasTargetsL= resultL.hasTargets();
+        currentAprilTags = resultL.getTargets();
+
+        if(hasTargetsR){
+            latestEstimatedPoseR = photonPoseEstimatorR.update(resultR);
         }
-        photonPoseEstimator.setReferencePose(referencePose);
-        SmartDashboard.putBoolean("has target", hasTargets);
+        if (hasTargetsL) {
+            latestEstimatedPoseL = photonPoseEstimatorL.update(resultL);
+        }
+        photonPoseEstimatorR.setReferencePose(referencePose);
+        SmartDashboard.putBoolean("has target", hasTargetsR);
 
 
         List<PhotonTrackedTarget> targets;
@@ -154,37 +186,21 @@ public class Vision extends SubsystemBase{
         int targetId =0; 
         
 
-        if(hasTargets){
-            targets = result.getTargets();
-            bestTarget = result.getBestTarget();
+        if(hasTargetsR){
+            targets = resultR.getTargets();
+            bestTarget = resultR.getBestTarget();
             targetId = bestTarget.fiducialId;
 
             if(fieldLayout.getTagPose(bestTarget.getFiducialId()).isPresent()){
-                estimatedRobotPose = PhotonUtils.estimateFieldToRobotAprilTag(bestTarget.getBestCameraToTarget(), fieldLayout.getTagPose(bestTarget.getFiducialId()).get(), bestTarget.getBestCameraToTarget());
-                Pose2d robotconversion = new Pose2d(estimatedRobotPose.getTranslation().getX(), estimatedRobotPose.getTranslation().getY(), new Rotation2d(estimatedRobotPose.getRotation().getZ()));
+                estimatedRobotPoseR = PhotonUtils.estimateFieldToRobotAprilTag(bestTarget.getBestCameraToTarget(), fieldLayout.getTagPose(bestTarget.getFiducialId()).get(), bestTarget.getBestCameraToTarget());
+                Pose2d robotconversion = new Pose2d(estimatedRobotPoseR.getTranslation().getX(), estimatedRobotPoseL.getTranslation().getY(), new Rotation2d(estimatedRobotPoseL.getRotation().getZ()));
                 field.setRobotPose(robotconversion);
                 // tagPose3dOpt = fieldLayout.getTagPose(targetId);
                 
             }
 
 
-        } 
-
-     
-
-        // if (tagPose3dOpt.isPresent()) {
-            // Convert the 3D pose to a 2D pose
-            // Pose2d tagPose2d = tagPose3dOpt.get().toPose2d();
-
-            // // Extract x, y, and rotation (in degrees)
-            // xTag = tagPose2d.getTranslation().getX();
-            // yTag = tagPose2d.getTranslation().getY();
-            // rotationTag = tagPose2d.getRotation().getDegrees();
-
-            // For example, publish them to SmartDashboard
-            
-        // }
-
+        }
         SmartDashboard.putNumber("AprilTag X", fieldLayout.getTagPose(18).get().getX());
         SmartDashboard.putNumber("AprilTag Y", fieldLayout.getTagPose(18).get().getY());
         SmartDashboard.putNumber("AprilTag Rotation (deg)", fieldLayout.getTagPose(18).get().getRotation().getAngle());
