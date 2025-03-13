@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -135,6 +136,31 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+
+   private final ElevatorZeroCommand zeroCommand = new ElevatorZeroCommand(elevatorSubsystem);
+  private final ElevatorL2Command l2Command = new ElevatorL2Command(elevatorSubsystem);
+  private final ElevatorL3Command l3Command = new ElevatorL3Command(elevatorSubsystem);
+  private final Command[] elevatorCommands = { zeroCommand, l2Command, l3Command };
+  private int curLevel = 0;
+
+  private void scheduleElevatorCommandByLevel() {
+    switch (elevatorSubsystem.level) {
+      case 0:
+        zeroCommand.schedule();
+        break;
+      case 1:
+        l2Command.schedule();
+        break;
+      case 2:
+        l3Command.schedule();
+        break;
+      default:
+        // fallback
+        zeroCommand.schedule();
+        break;
+    }
+  }
+
   private void configureBindings() {
     
     // controller.L1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
@@ -156,7 +182,18 @@ public class RobotContainer {
     controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
     controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
 
+    controllerP.L1().onTrue(new RunCommand(() -> {
+      // increment level
+      elevatorSubsystem.level = (elevatorSubsystem.level + 1) % 3;
+      scheduleElevatorCommandByLevel();
+    }));
 
+    // R2 -> decrement level
+    controllerP.R1().onTrue(new RunCommand(() -> {
+      // decrement level (wrap around with +3)
+      elevatorSubsystem.level = (elevatorSubsystem.level - 1 + 3) % 3;
+      scheduleElevatorCommandByLevel();
+    }));
 
     controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
     controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
