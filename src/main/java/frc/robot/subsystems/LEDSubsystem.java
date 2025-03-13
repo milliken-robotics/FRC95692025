@@ -9,6 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj.util.*;
 import edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import edu.wpi.first.units.*;
 
 public class LEDSubsystem extends SubsystemBase {
       private final AddressableLED m_led = new AddressableLED(9);
@@ -21,6 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     m_led.start();
     pattern = LEDPattern.rainbow(255, 120);
+    setRainbowScrolling();
     setDefaultCommand(runPattern(pattern));
    }
 
@@ -37,6 +47,11 @@ public class LEDSubsystem extends SubsystemBase {
      // For example, create a rainbow pattern with desired brightness and speed
      // parameters.
      pattern = LEDPattern.rainbow(255, 120);
+   }
+   public void setRainbowScrolling(){
+
+      pattern = LEDPattern.rainbow(255, 120).scrollAtAbsoluteSpeed(
+          MetersPerSecond.of(1), Meters.of(1 / 120.0));
    }
 
    // Sets all LEDs to a solid color.
