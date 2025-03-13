@@ -178,17 +178,11 @@ public class RobotContainer {
       driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     }
 
-    controllerP.circle().onTrue(new ElevatorZeroCommand(elevatorSubsystem));
-    controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
-    controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
+    // controllerP.circle().onTrue(new ElevatorZeroCommand(elevatorSubsystem));
+    // controllerP.cross().onTrue(new ElevatorL3Command(elevatorSubsystem));
+    // controllerP.triangle().onTrue(new ElevatorL2Command(elevatorSubsystem));
 
-    controllerP.L1().onTrue(new RunCommand(() -> {
-      // increment level
-      elevatorSubsystem.level = (elevatorSubsystem.level + 1) % 3;
-      scheduleElevatorCommandByLevel();
-    }));
 
-    // R2 -> decrement level
     controllerP.R1().onTrue(new ElevatorCycle(elevatorSubsystem, 1));
     controllerP.L1().onTrue(new ElevatorCycle(elevatorSubsystem, -1));
 

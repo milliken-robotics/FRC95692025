@@ -32,6 +32,9 @@ public class ElevatorCycle extends Command {
             run = new ElevatorZeroCommand(elevatorSubsystem);
         }
         else if (curlevel == 0) {
+            run = new ElevatorZeroCommand(elevatorSubsystem);
+        }
+        else if (curlevel == 4) {
             run = new ElevatorL3Command(elevatorSubsystem);
         }
         else{
