@@ -54,16 +54,16 @@ public class CoralEndeffactorSubsystem extends SubsystemBase{
         rightDiffRatio = 0.4; 
     }
 
-    public boolean beamBroken2(){
+    public boolean beamBroken2(){//this is the one onthe outside
         return beamBreak2.get(); //(true not broken) false broke
     }
 
-    public boolean beamBroken1() {
+    public boolean beamBroken1() { // this is the first one
         return beamBreak1.get();
     }
 
     public boolean isObjectIn() {
-        return beamBroken2(); //&& !this.beamBroken1(); 
+        return !beamBroken2() && this.beamBroken1(); 
     }
 
     @Override

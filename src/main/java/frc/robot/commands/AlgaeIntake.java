@@ -13,6 +13,7 @@ public class AlgaeIntake extends Command {
 
     @Override
     public void initialize() {
+        
         algaeSubsystem.setSpeed(-12);
     }
 

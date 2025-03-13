@@ -24,12 +24,17 @@ public class CoralIntakeCommand extends Command{
 
     @Override
     public void execute(){
-        coralEndeffactorSubsystem.setVolt(12);
+        if(!coralEndeffactorSubsystem.beamBroken1()){
+            coralEndeffactorSubsystem.setVolt(4);
+        }
+        else{
+            coralEndeffactorSubsystem.setVolt(12);
+        }
        
     }
     @Override
     public void end(boolean interrupted){
-        new WaitCommand(0.045);
+        // new WaitCommand(0.045);
         coralEndeffactorSubsystem.stop();
     }
     @Override

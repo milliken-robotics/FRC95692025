@@ -72,7 +72,11 @@ public class Vision extends SubsystemBase{
     private PhotonCamera endEffectorCamera = new PhotonCamera("End Effector Camera"); 
     
     //stored value of robto cam postiont
-    private Transform3d robotToCam = new Transform3d(new Translation3d(-0.121, -0.264, 0.289), new Rotation3d(-90, 0, 0));
+    private Transform3d robotToCam = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338), new Rotation3d(-90, 0, 135));
+
+    //x: 0.327
+    //y: 0.1317
+    //z: 0.338
     
     //calculator for pose
     private PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(

@@ -31,7 +31,7 @@ public class CoralEjectCommand extends Command{
             coralEndeffactorSubsystem.setVoltDiff(4);
         }
         else{
-            coralEndeffactorSubsystem.setVolt(6);
+            coralEndeffactorSubsystem.setVolt(12);
         }
     }
     @Override
