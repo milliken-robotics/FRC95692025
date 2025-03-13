@@ -204,6 +204,9 @@ public class SwerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Robot X", currentPose.getTranslation().getX());
         SmartDashboard.putNumber("Robot Y", currentPose.getTranslation().getY());
         SmartDashboard.putNumber("Robot Heading (deg)", currentPose.getRotation().getDegrees());
+        double xTag = vision.xTag;
+        double yTag = vision.yTag;
+        double rotationTag = vision.rotationTag;
 
        
     }
