@@ -19,13 +19,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.FlashBang;
 import frc.robot.commands.AlgaeCommands.AlgaeEject;
 import frc.robot.commands.AlgaeCommands.AlgaePivotDown;
 import frc.robot.commands.AlgaeCommands.AlgaePivotMiddle;
 import frc.robot.commands.AlgaeCommands.AlgaePivotUp;
 import frc.robot.commands.AlgaeCommands.AlgaePivotUpper;
 import frc.robot.commands.AlgaeCommands.AlgaeSeqIntake;
-import frc.robot.commands.AutoAlign.AlignAprilTag18;
+import frc.robot.commands.AutoAlign.AlignToLeft;
+import frc.robot.commands.AutoAlign.AlignToRight;
 import frc.robot.commands.CoralCommands.CoralEjectCommand;
 import frc.robot.commands.CoralCommands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorCycle;
@@ -71,8 +73,8 @@ public class RobotContainer {
 
     configureBindings();
     //driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
-    NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem));
+    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem, ledSubsystem));
+    NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem, ledSubsystem));
     NamedCommands.registerCommand("L0", new ElevatorZeroCommand(elevatorSubsystem));
     NamedCommands.registerCommand("L1", new ElevatorL1Command(elevatorSubsystem));
     NamedCommands.registerCommand("L2", new ElevatorL2Command(elevatorSubsystem));
@@ -186,11 +188,13 @@ public class RobotContainer {
     controllerP.R1().onTrue(new ElevatorCycle(elevatorSubsystem, 1));
     controllerP.L1().onTrue(new ElevatorCycle(elevatorSubsystem, -1));
 
-    controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem));
-    controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem));
+    controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem,ledSubsystem));
+    controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem, ledSubsystem));
 
     controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
-    controllerP.povUp().onTrue(new AlignAprilTag18(driveBase));
+    controllerP.povUp().whileTrue(new AlignToLeft(driveBase));
+    controllerP.povDown().whileTrue(new AlignToRight(driveBase));
+    controllerP.povRight().whileTrue(new FlashBang(ledSubsystem));   
 
 
     controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));

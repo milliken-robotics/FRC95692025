@@ -2,24 +2,29 @@ package frc.robot.commands.CoralCommands;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class CoralIntakeCommand extends Command{
       private final CoralEndeffactorSubsystem coralEndeffactorSubsystem; 
       private final Timer time = new Timer();
+   private final LEDSubsystem ledSubsystem;
 
 
-
-    public CoralIntakeCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem){
+    public CoralIntakeCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem, LEDSubsystem ledSubsystem){
         this.coralEndeffactorSubsystem = coralEndeffactorSubsystem;
+        this.ledSubsystem = ledSubsystem;
         addRequirements(coralEndeffactorSubsystem);
+  
 
     }
     
       @Override
     public void initialize(){
+        ledSubsystem.setBreathe(Color.kGreen, 1);
     }
 
     @Override
@@ -36,6 +41,7 @@ public class CoralIntakeCommand extends Command{
     public void end(boolean interrupted){
         // new WaitCommand(0.045);
         coralEndeffactorSubsystem.stop();
+        ledSubsystem.setSolidColor(Color.kGreen);
     }
     @Override
     public boolean isFinished(){

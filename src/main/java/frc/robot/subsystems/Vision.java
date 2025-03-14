@@ -49,6 +49,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import javax.sound.sampled.SourceDataLine;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -64,7 +67,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 
 
 
-    public class Vision extends SubsystemBase{
+public class Vision extends SubsystemBase{
     //field 
     public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     
@@ -114,7 +117,6 @@ import swervelib.telemetry.SwerveDriveTelemetry;
     public Vision(){
         SmartDashboard.putData("photon subsytem", field);
         referencePose = new Pose3d(0,0,0,new Rotation3d(0,0,0));
-        
     }
 
     public Optional<EstimatedRobotPose> getR() {

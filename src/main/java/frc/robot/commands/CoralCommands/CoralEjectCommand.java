@@ -1,28 +1,35 @@
 package frc.robot.commands.CoralCommands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class CoralEjectCommand extends Command{
       private final CoralEndeffactorSubsystem coralEndeffactorSubsystem; 
       private final ElevatorSubsystem elevatorSubsystem; 
+      private final LEDSubsystem ledSubsystem;
 
 
       private int level;   
 
-    public CoralEjectCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem, ElevatorSubsystem elevatorSubsystem){
+    public CoralEjectCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem, ElevatorSubsystem elevatorSubsystem, LEDSubsystem ledSubsystem){
         this.coralEndeffactorSubsystem = coralEndeffactorSubsystem;
         this.elevatorSubsystem = elevatorSubsystem; 
+        this.ledSubsystem = ledSubsystem;
+
         addRequirements(coralEndeffactorSubsystem);
+
 
     }
     
       @Override
     public void initialize(){
         level = elevatorSubsystem.getLevel();
+        ledSubsystem.setSolidColor(Color.kRed);
     }
 
     @Override
@@ -38,6 +45,7 @@ public class CoralEjectCommand extends Command{
     public void end(boolean interrupted){
         new WaitCommand(0.5);
         coralEndeffactorSubsystem.stop();
+        ledSubsystem.runDefaultColor();
     }
     @Override
     public boolean isFinished(){
