@@ -26,8 +26,7 @@ import frc.robot.commands.AlgaeCommands.AlgaePivotMiddle;
 import frc.robot.commands.AlgaeCommands.AlgaePivotUp;
 import frc.robot.commands.AlgaeCommands.AlgaePivotUpper;
 import frc.robot.commands.AlgaeCommands.AlgaeSeqIntake;
-import frc.robot.commands.AutoAlign.AlignToLeft;
-import frc.robot.commands.AutoAlign.AlignToRight;
+import frc.robot.commands.AutoAlign.AutoAlign;
 import frc.robot.commands.CoralCommands.CoralEjectCommand;
 import frc.robot.commands.CoralCommands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorCycle;
@@ -68,18 +67,21 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    
+   
 
     configureBindings();
     //driveBase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-    NamedCommands.registerCommand("EjectCoral", new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem, ledSubsystem));
-    NamedCommands.registerCommand("IntakeCoral", new CoralIntakeCommand(coralEndeffactorSubsystem, ledSubsystem));
+    NamedCommands.registerCommand("EC", new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem, ledSubsystem));
+    NamedCommands.registerCommand("IC", new CoralIntakeCommand(coralEndeffactorSubsystem, ledSubsystem));
     NamedCommands.registerCommand("L0", new ElevatorZeroCommand(elevatorSubsystem));
     NamedCommands.registerCommand("L1", new ElevatorL1Command(elevatorSubsystem));
     NamedCommands.registerCommand("L2", new ElevatorL2Command(elevatorSubsystem));
     NamedCommands.registerCommand("L3", new ElevatorL3Command(elevatorSubsystem));
     new ElevatorZeroCommand(elevatorSubsystem);
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
   }
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(driveBase.getSwerveDrive(),
@@ -144,6 +146,7 @@ public class RobotContainer {
   private final ElevatorL3Command l3Command = new ElevatorL3Command(elevatorSubsystem);
   private final Command[] elevatorCommands = { zeroCommand, l2Command, l3Command };
   private int curLevel = 0;
+  private int currentAprilTag = 0;
 
   private void scheduleElevatorCommandByLevel() {
     switch (elevatorSubsystem.level) {
@@ -168,8 +171,8 @@ public class RobotContainer {
     // controller.L1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
     // controller.R1().whileTrue(new RunCommand(() -> elevatorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->elevatorSubsystem.stop()));
 
-    // controllerX.L1().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
-    // controllerX.R1().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
+    // controllerX.leftBumper().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
+    // controllerX.rightBumper().whileTrue(new RunCommand(() -> algaeEndeffactorSubsystem.setVolt(-5))).onFalse(new RunCommand (()->algaeEndeffactorSubsystem.algaePivotStop()));
 
 
      if (RobotBase.isSimulation())
@@ -191,10 +194,16 @@ public class RobotContainer {
     controllerX.leftBumper().onTrue(new CoralIntakeCommand(coralEndeffactorSubsystem,ledSubsystem));
     controllerX.rightBumper().onTrue(new CoralEjectCommand(coralEndeffactorSubsystem, elevatorSubsystem, ledSubsystem));
 
-    controllerP.povLeft().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
-    controllerP.povUp().whileTrue(new AlignToLeft(driveBase));
-    controllerP.povDown().whileTrue(new AlignToRight(driveBase));
-    controllerP.povRight().whileTrue(new FlashBang(ledSubsystem));   
+    controllerP.povUp().onTrue(Commands.runOnce(()-> driveBase.zeroGyro()));
+    // currentAprilTag = vision.targetId;
+    // controllerP.povLeft().whileTrue(new AutoAlign("left", driveBase, currentAprilTag));
+    // // .onFalse(
+    // //   new InstantCommand((this.cancel()))
+    // // );
+    // controllerP.povRight().whileTrue(new AutoAlign("right", driveBase, currentAprilTag));
+
+
+    controllerP.povDown().whileTrue(new FlashBang(ledSubsystem));   
 
 
     controllerX.y().onTrue(new AlgaePivotUp(algaeEndeffactorSubsystem));
@@ -209,7 +218,10 @@ public class RobotContainer {
     controllerX.povRight().onTrue(Commands.runOnce(()-> coralEndeffactorSubsystem.diffLeft()));
   }
 
+  // @Override
+  // public void periodic() {
 
+  // }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -223,4 +235,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
+
+  // public void stopAutoBuilder() {
+  //   if ()
 }

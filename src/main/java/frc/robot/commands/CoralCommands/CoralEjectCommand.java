@@ -47,6 +47,7 @@ public class CoralEjectCommand extends Command{
         coralEndeffactorSubsystem.stop();
         ledSubsystem.runDefaultColor();
     }
+    
     @Override
     public boolean isFinished(){
         return coralEndeffactorSubsystem.beamBroken2();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 

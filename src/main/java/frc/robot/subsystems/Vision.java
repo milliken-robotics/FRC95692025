@@ -112,7 +112,10 @@ public class Vision extends SubsystemBase{
 
     Pose3d estimatedRobotPoseR =  new Pose3d(0,0,0,new Rotation3d(0,0,0));
     Pose3d estimatedRobotPoseL = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
+    boolean hasTargetsR, hasTargetsL;
+    PhotonPipelineResult resultR, resultL;
     
+    public int targetId =0; 
     //construct stuff
     public Vision(){
         SmartDashboard.putData("photon subsytem", field);
@@ -122,7 +125,7 @@ public class Vision extends SubsystemBase{
     public Optional<EstimatedRobotPose> getR() {
         return latestEstimatedPoseR;
     }
-    
+
     public Optional<EstimatedRobotPose> getL() {
         return latestEstimatedPoseL;
     }
@@ -149,6 +152,7 @@ public class Vision extends SubsystemBase{
     public List<PhotonTrackedTarget> getAprilTags(){
         return currentAprilTags;
     }
+
     public void setReferencePose (Pose3d refPose3d){
         referencePose = refPose3d;
     }
@@ -160,18 +164,22 @@ public class Vision extends SubsystemBase{
     public Optional<Double> getTimestampL() {
         return latestEstimatedPoseL.map(x -> x.timestampSeconds);
     }
+
+    public List<PhotonTrackedTarget> getAllCurrentTargets() {
+        hasTargetsR = resultR.hasTargets();
+        List<PhotonTrackedTarget> aprilTags = resultR.getTargets();
+
+        hasTargetsL= resultL.hasTargets();
+        aprilTags = resultL.getTargets();
+        return aprilTags;
+    }
     //update the pose every so often and also set the refrence point 
     @Override
     public void periodic(){
 
-
-        var resultR = endEffectorCameraR.getLatestResult();
-        boolean hasTargetsR = resultR.hasTargets();
-        currentAprilTags = resultR.getTargets();
-
-        var resultL = endEffectorCameraL.getLatestResult();
-        boolean hasTargetsL= resultL.hasTargets();
-        currentAprilTags = resultL.getTargets();
+        resultR = endEffectorCameraR.getLatestResult();
+        resultL = endEffectorCameraL.getLatestResult();
+        currentAprilTags = getAllCurrentTargets(); 
 
         if(hasTargetsR){
             latestEstimatedPoseR = photonPoseEstimatorR.update(resultR);
@@ -185,7 +193,7 @@ public class Vision extends SubsystemBase{
 
         List<PhotonTrackedTarget> targets;
         PhotonTrackedTarget bestTarget;
-        int targetId =0; 
+        
         
 
         if(hasTargetsR){
@@ -201,6 +209,13 @@ public class Vision extends SubsystemBase{
                 
             }
 
+
+        }
+        
+        else if(hasTargetsL){
+            targets = resultL.getTargets();
+            bestTarget = resultL.getBestTarget();
+            targetId = bestTarget.fiducialId;
 
         }
         SmartDashboard.putNumber("AprilTag X", fieldLayout.getTagPose(18).get().getX());

@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New New Path"
+            "pathName": "AutoPathStraight"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.1
           }
         },
         {
           "type": "named",
           "data": {
             "name": "EC"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
           }
         }
       ]

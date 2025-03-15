@@ -22,7 +22,7 @@ public class AlgaePivotMiddle extends Command {
 
     @Override
     public void execute(){
-        algaeEndeffactorSubsystem.algaeSetPoint(0.5);
+        algaeEndeffactorSubsystem.algaeSetPoint(-0.11);
        
     }
     @Override

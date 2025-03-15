@@ -70,8 +70,6 @@ public class SwerveSubsystem extends SubsystemBase{
             RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
     }
 
-
-
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }
@@ -309,6 +307,8 @@ public class SwerveSubsystem extends SubsystemBase{
             edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                         );
     }
+
+    
 
     
 

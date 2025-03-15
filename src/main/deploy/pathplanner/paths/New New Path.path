@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.783522727272728,
-        "y": 4.159616477272727
+        "x": 1.1481410256410252,
+        "y": 1.021730769230769
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.212301136363638,
-        "y": 0.011434659090908905
+        "x": 2.0976282051282045,
+        "y": 1.5996794871794873
       },
       "isLocked": false,
-      "linkedName": "intaked"
+      "linkedName": "boob"
     },
     {
       "anchor": {
-        "x": 3.8889204545454543,
-        "y": 3.082684659090909
+        "x": 4.068846153846153,
+        "y": 2.7658974358974366
       },
       "prevControl": {
-        "x": 2.034204545454546,
-        "y": 1.7963494318181803
+        "x": 2.9026282051282046,
+        "y": 1.7957692307692317
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "scored"
+      "linkedName": "BOOOB"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -118.61045966596521
+    "rotation": -118.21735585472932
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -126.5288553669852
   },
   "useDefaultConstraints": true
 }

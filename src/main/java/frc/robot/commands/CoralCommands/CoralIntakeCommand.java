@@ -24,7 +24,7 @@ public class CoralIntakeCommand extends Command{
     
       @Override
     public void initialize(){
-        ledSubsystem.setBreathe(Color.kGreen, 1);
+        ledSubsystem.setSolidColor(Color.kYellow);
     }
 
     @Override

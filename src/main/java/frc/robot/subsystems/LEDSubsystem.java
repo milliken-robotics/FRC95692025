@@ -50,10 +50,10 @@ public class LEDSubsystem extends SubsystemBase {
     var alliance = DriverStation.getAlliance();
         if(alliance.isPresent()) {
           if(alliance.get() == DriverStation.Alliance.Red){
-            setContinousGradientScrolling(Color.kCoral, Color.kDarkRed, 0.8);
+            setContinousGradientScrolling(Color.kDarkRed, Color.kOrangeRed, 0.6);
           }
           else{
-            setContinousGradientScrolling(Color.kCyan, Color.kDarkBlue, 0.8);
+            setContinousGradientScrolling(Color.kCyan, Color.kDarkBlue, 0.6);
           }
         }
         else{
