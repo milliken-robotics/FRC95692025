@@ -6,8 +6,8 @@ import frc.robot.subsystems.AlgaeEndeffactorSubsystem;
 public class AlgaeSeqIntake extends SequentialCommandGroup{
     public AlgaeSeqIntake(AlgaeEndeffactorSubsystem algaeEndeffactorSubsystem){
         addCommands(
-            new AlgaeIntake(algaeEndeffactorSubsystem).withTimeout(0.2),
-            new AlgaeIntakeStop(algaeEndeffactorSubsystem).withTimeout(0.2)
+            new AlgaeIntake(algaeEndeffactorSubsystem)//.withTimeout(0.2),
+            // new AlgaeIntakeStop(algaeEndeffactorSubsystem).withTimeout(0.2)
         );
     }
 }
