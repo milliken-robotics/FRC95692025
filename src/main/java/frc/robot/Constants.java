@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -45,4 +49,38 @@ public final class Constants {
     public static final double zerod = 25; 
 
   }
+
+  public class AutoAlignCoordinates {
+
+    public static class L {
+        public static final Pose2d pose6 = new Pose2d(13.65, 2.8, new Rotation2d(Math.toRadians(-60)));
+        public static final Pose2d pose7 = new Pose2d(14.38, 3.91, new Rotation2d(0));
+        public static final Pose2d pose8 = new Pose2d(13.84, 5.14, new Rotation2d(Math.toRadians(60)));
+        public static final Pose2d pose9 = new Pose2d(12.54, 5.2, new Rotation2d(Math.toRadians(120)));
+        public static final Pose2d pose10 = new Pose2d(11.74, 4.14, new Rotation2d(Math.toRadians(180)));
+        public static final Pose2d pose11 = new Pose2d(12.30, 2.98, new Rotation2d(Math.toRadians(-120)));
+        public static final Pose2d pose17 = new Pose2d(3.92, 2.83, new Rotation2d(Math.toRadians(-120)));
+        public static final Pose2d pose18 = new Pose2d(3.09, 4.01, new Rotation2d(Math.toRadians(180)));
+        public static final Pose2d pose19 = new Pose2d(3.76, 4.98, new Rotation2d(Math.toRadians(120)));
+        public static final Pose2d pose20 = new Pose2d(5., 5.17, new Rotation2d(Math.toRadians(60)));
+        public static final Pose2d pose21 = new Pose2d(5.84, 4.14, new Rotation2d(0));
+        public static final Pose2d pose22 = new Pose2d(5.293, 2.983, new Rotation2d(Math.toRadians(-60)));
+    }
+
+    public static class R {
+        public static final Pose2d pose6 = new Pose2d(13.90, 2.96, new Rotation2d(Math.toRadians(-60)));
+        public static final Pose2d pose7 = new Pose2d(14.38, 4.18, new Rotation2d(0));
+        public static final Pose2d pose8 = new Pose2d(13.57, 5.24, new Rotation2d(Math.toRadians(60)));
+        public static final Pose2d pose9 = new Pose2d(12.26, 5.07, new Rotation2d(Math.toRadians(120)));
+        public static final Pose2d pose10 = new Pose2d(11.74, 3.85, new Rotation2d(Math.toRadians(180)));
+        public static final Pose2d pose11 = new Pose2d(12.56, 2.8, new Rotation2d(Math.toRadians(-120)));
+        public static final Pose2d pose17 = new Pose2d(4.27, 2.69, new Rotation2d(Math.toRadians(-120)));
+        public static final Pose2d pose18 = new Pose2d(3.117, 3.545, new Rotation2d(Math.toRadians(180)));
+        public static final Pose2d pose19 = new Pose2d(3.42, 4.89, new Rotation2d(Math.toRadians(120)));
+        public static final Pose2d pose20 = new Pose2d(4.72, 5.37, new Rotation2d(Math.toRadians(60)));
+        public static final Pose2d pose21 = new Pose2d(5.83, 4.52, new Rotation2d(0));
+        public static final Pose2d pose22 = new Pose2d(5.19, 2.9, new Rotation2d(Math.toRadians(-60)));
+    }
+
+}
 }

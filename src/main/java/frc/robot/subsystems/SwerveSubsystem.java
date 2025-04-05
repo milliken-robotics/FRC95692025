@@ -80,11 +80,13 @@ public class SwerveSubsystem extends SubsystemBase{
         
 
     }
+
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
         return run(()->{
             swerveDrive.driveFieldOriented(velocity.get());
         });
     }
+    
     public void setupPathPlanner()
     {
         // Load the RobotConfig from the GUI settings. You should probably
@@ -169,10 +171,10 @@ public class SwerveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        // SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
-        // SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 1", swerveDrive.getModules()[0].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 2", swerveDrive.getModules()[1].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 3", swerveDrive.getModules()[2].getAbsolutePosition());
+        SmartDashboard.putNumber("Module 4", swerveDrive.getModules()[3].getAbsolutePosition());
         // SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
         Optional<Pose2d> visionPoseOptR = vision.getPose2dR();

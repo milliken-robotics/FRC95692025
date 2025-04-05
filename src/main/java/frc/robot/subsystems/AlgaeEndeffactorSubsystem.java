@@ -15,13 +15,13 @@ import frc.robot.Constants.HardwareMap;
 public class AlgaeEndeffactorSubsystem extends SubsystemBase{
     private final SparkMax algaeMotor = new SparkMax(HardwareMap.IT_ALGAE, MotorType.kBrushless);
     private final SparkMax algaePivotMotor = new SparkMax(HardwareMap.IT_ALGAE_PIVOT, MotorType.kBrushless);
-    private final double zero = 0.7;
+    private final double zero = 0.54;
 
     // private final RelativeEncoder algaeMotorEncoder = algaeMotor.getEncoder();
  //   private final RelativeEncoder algaePivotMotorEncoder = algaePivotMotor.getEncoder();
     private final DutyCycleEncoder algaeDutyCycleEncoder = new DutyCycleEncoder(7);
 
-    private final PIDController pid = new PIDController(5, 0, 0);
+    private final PIDController pid = new PIDController(6, 0, 0);
 
     public AlgaeEndeffactorSubsystem (){
     }
@@ -31,7 +31,10 @@ public class AlgaeEndeffactorSubsystem extends SubsystemBase{
 
         double output = pid.calculate(cur, target);
         output = output*algaePivotMotor.getBusVoltage()*-1;
+        
         SmartDashboard.putNumber("target algae", target);
+
+        SmartDashboard.putNumber("cur algae angle", cur);
        
         SmartDashboard.putNumber("algae ouput", output);
 

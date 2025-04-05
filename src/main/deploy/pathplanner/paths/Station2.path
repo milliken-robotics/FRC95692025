@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 16.216,
-        "y": 7.101
+        "x": 4.237926136363637,
+        "y": 5.346
       },
       "prevControl": null,
       "nextControl": {
-        "x": 15.545166666666669,
-        "y": 6.812025641025642
+        "x": 3.2071472749093157,
+        "y": 5.941129315977516
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Score2LeftAuton"
     },
     {
       "anchor": {
-        "x": 13.842371794871795,
-        "y": 5.088012820512821
+        "x": 1.12,
+        "y": 7.022
       },
       "prevControl": {
-        "x": 14.461602564102565,
-        "y": 5.831089743589745
+        "x": 2.596839555194176,
+        "y": 6.170930550800654
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Station"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 3.55,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 127.34934904464065
   },
   "reversed": false,
-  "folder": "RedRightAutoPaths",
+  "folder": "LEFT AUTON",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 55.0
+    "velocity": 0,
+    "rotation": 120.46554491945994
   },
   "useDefaultConstraints": true
 }

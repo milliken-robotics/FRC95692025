@@ -76,9 +76,9 @@ public class Vision extends SubsystemBase{
     private PhotonCamera endEffectorCameraL = new PhotonCamera("left camera");
     
     //stored value of robto cam postiont
-    private Transform3d robotToCamR = new Transform3d(new Translation3d(-0.1317, 1.317, 0.338), new Rotation3d(-90, 0, 135));
-    private Transform3d robotToCamL = new Transform3d(new Translation3d(-0.1317, 0, 0.338),
-            new Rotation3d(-90, 0, 135));
+    private Transform3d robotToCamR = new Transform3d(new Translation3d(-0.13172, 0.32659, 0.338), new Rotation3d(0, 0, 3.141592653589793));
+    private Transform3d robotToCamL = new Transform3d(new Translation3d(-0.13172, -0.32659, 0.338),
+            new Rotation3d(0, 0, 3.141592653589793));
 
     //x: 0.327
     //y: 0.1317
@@ -87,11 +87,11 @@ public class Vision extends SubsystemBase{
     //calculator for pose
     private PhotonPoseEstimator photonPoseEstimatorR = new PhotonPoseEstimator(
         fieldLayout, 
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        PoseStrategy.AVERAGE_BEST_TARGETS,
         robotToCamR);
     private PhotonPoseEstimator photonPoseEstimatorL = new PhotonPoseEstimator(
         fieldLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        PoseStrategy.AVERAGE_BEST_TARGETS,
         robotToCamL);
 
     //this is just for smart dashboard purposes

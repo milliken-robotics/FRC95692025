@@ -5,6 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class FlashBang extends Command{
+  @Override
+  public boolean runsWhenDisabled() {
+      return true;
+  }
 
     private final LEDSubsystem ledSubsystem; 
     public FlashBang(LEDSubsystem ledSubsystem){

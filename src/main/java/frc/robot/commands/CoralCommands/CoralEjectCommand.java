@@ -35,10 +35,10 @@ public class CoralEjectCommand extends Command{
     @Override
     public void execute(){
         if(level == 1 || level ==0){
-            coralEndeffactorSubsystem.setVoltDiff(4);
+            coralEndeffactorSubsystem.setVoltDiff(3.8);
         }
         else{
-            coralEndeffactorSubsystem.setVolt(8);
+            coralEndeffactorSubsystem.setVolt(7.5);
         }
     }
     @Override

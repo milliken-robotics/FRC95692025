@@ -1,51 +1,50 @@
 package frc.robot.commands.CoralCommands;
 
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralEndeffactorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 
-public class CoralIntakeCommand extends Command{
+public class CoralForceDiffEjectCommand extends Command{
       private final CoralEndeffactorSubsystem coralEndeffactorSubsystem; 
-      private final Timer time = new Timer();
-   private final LEDSubsystem ledSubsystem;
+      private final ElevatorSubsystem elevatorSubsystem; 
+      private final LEDSubsystem ledSubsystem;
 
 
-    public CoralIntakeCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem, LEDSubsystem ledSubsystem){
+      private int level;   
+
+    public CoralForceDiffEjectCommand(CoralEndeffactorSubsystem coralEndeffactorSubsystem, ElevatorSubsystem elevatorSubsystem, LEDSubsystem ledSubsystem){
         this.coralEndeffactorSubsystem = coralEndeffactorSubsystem;
+        this.elevatorSubsystem = elevatorSubsystem; 
         this.ledSubsystem = ledSubsystem;
+
         addRequirements(coralEndeffactorSubsystem);
-  
+
 
     }
     
       @Override
     public void initialize(){
-        ledSubsystem.setSolidColor(Color.kYellow);
+        level = elevatorSubsystem.getLevel();
+        ledSubsystem.setSolidColor(Color.kRed);
     }
 
     @Override
     public void execute(){
-        if(!coralEndeffactorSubsystem.beamBroken1()){
-            coralEndeffactorSubsystem.setVolt(4);
-        }
-        else{
-            coralEndeffactorSubsystem.setVolt(12);
-        }
-       
+        coralEndeffactorSubsystem.setVoltDiff(5.5);
     }
     @Override
     public void end(boolean interrupted){
-        // new WaitCommand(0.045);
+        new WaitCommand(0.5);
         coralEndeffactorSubsystem.stop();
-        ledSubsystem.setSolidColor(Color.kGreen);
+        ledSubsystem.runDefaultColor();
     }
     
+    @Override
     public boolean isFinished(){
-        return coralEndeffactorSubsystem.isObjectIn();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
-    } // if not broken and broken
-    //true not broken, false broken
+        return coralEndeffactorSubsystem.beamBroken2();// Math.abs(900 - elevatorSubsystem.getPoint()) < 20; 
+    }
 }
